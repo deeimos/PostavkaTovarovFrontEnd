@@ -1,26 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { observer } from "mobx-react-lite";
+import React, { useContext } from "react";
+import { BrowserRouter } from "react-router-dom";
+import { Context } from ".";
+import { AppRouter, NavBar } from "./components";
+import { check } from "./server/user";
+import { $authHost } from "./server";
 
-function App() {
+const App = observer(() => {
+  const { user } = useContext(Context);
+
+  const checkAuth = async () => {
+    const userData = await check();
+    return userData;
+  };
+  console.log($authHost.interceptors.request);
+  if (!user.isLogOut) {
+    user.ReloadPage(checkAuth);
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <NavBar />
+      <AppRouter />
+    </BrowserRouter>
   );
-}
+});
 
 export default App;
